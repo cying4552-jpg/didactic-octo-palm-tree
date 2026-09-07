@@ -1,0 +1,73 @@
+id="courseName" placeholder="例如：国际贸易实务"></div>
+<div><span class="label">星期</span><select class="field" id="courseDay"><option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option><option value="0">周日</option></select></div>
+<div><span class="label">开始</span><input class="field" id="courseStart" type="time" value="09:00"></div>
+<div><span class="label">结束</span><input class="field" id="courseEnd" type="time" value="10:30"></div>
+<div class="full"><button class="btn" onclick="addCourse()">添加课程</button></div>
+</div></div>
+<div class="section-title"><h2>本周课表</h2><span id="courseCount"></span></div><div class="course-grid" id="courseGrid"></div>
+</section>
+
+<section class="page" data-page="habits">
+<div class="section-title"><h2>本周习惯</h2><span id="weekRange"></span></div>
+<div class="card"><div class="week-head" id="weekHead"></div><div id="habitTable"></div><div class="inputrow" style="margin-top:12px"><input class="field" id="habitName" placeholder="新增习惯，例如：背单词"><button class="btn" onclick="addHabit()">新增</button></div></div>
+<div class="section-title"><h2>专注记录</h2><span>按天累计</span></div><div class="card"><div class="inputrow"><input class="field" id="focusMin" type="number" placeholder="今天专注了多少分钟"><button class="btn" onclick="addFocus()">记录</button></div></div>
+</section>
+
+<section class="page" data-page="calendar">
+<div class="section-title"><h2 id="calTitle"></h2><span>任务与课程自动标记</span></div><div class="card"><div class="calendar-head"><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div></div><div class="calendar" id="calendarGrid"></div></div>
+</section>
+
+<section class="page" data-page="weekly">
+<div class="section-title"><h2>本周复盘</h2><span>自动总结</span></div>
+<div class="grid">
+<div class="card stat"><strong id="weekFocus">0</strong><span>专注分钟</span></div>
+<div class="card stat"><strong id="weekDone">0</strong><span>完成任务</span></div>
+<div class="card stat"><strong id="weekHabit">0%</strong><span>习惯完成率</span></div>
+<div class="card stat"><strong id="weekRisk">0</strong><span>未完成高风险</span></div>
+</div>
+<div class="grid-2"><div><div class="section-title"><h2>7 日投入</h2><span>专注分钟</span></div><div class="card"><div class="chart" id="focusChart"></div></div></div><div><div class="section-title"><h2>小桃总结</h2><span>规则生成</span></div><div class="notice" id="weeklyText"></div></div></div>
+</section>
+
+<section class="page" data-page="history">
+<div class="section-title"><h2>历史回顾</h2><span>按月看自己的节奏</span></div><div class="history-grid" id="historyGrid"></div>
+</section>
+
+<section class="page" data-page="themes">
+<div class="section-title"><h2>主题工作室</h2><span>每套主题独立配色与肌理</span></div><div class="theme-grid" id="themeGrid"></div>
+<div class="section-title"><h2>数据与迁移</h2><span>不绑定服务器</span></div><div class="card"><div class="formgrid"><button class="btn" onclick="exportData()">导出 JSON</button><button class="ghost" onclick="document.getElementById('fileInput').click()">导入 JSON</button><button class="ghost" onclick="resetData()">重置本地数据</button><input id="fileInput" type="file" accept=".json" hidden onchange="importData(event)"></div></div>
+</section>
+
+<section class="page" data-page="assistant">
+<div class="section-title"><h2>小桃助手</h2><span>本地规则版，不需要 API Key</span></div>
+<div class="card assistant"><div class="chat" id="chatBox"><div class="bubble bot">🍑 你可以问我“今天先做什么”“有哪些高风险任务”“这周学习怎么样”“今天有什么课”。</div></div><div class="inputrow" style="margin-top:12px"><input class="field" id="chatInput" placeholder="输入一句话…"><button class="btn" onclick="askAssistant()">发送</button></div></div>
+</section>
+</main>
+</div>
+
+<nav class="mobile-nav" id="mobileNav">
+<button class="active" data-go="home"><b>🏠</b>首页</button>
+<button data-go="plan"><b>🎯</b>计划</button>
+<button data-go="habits"><b>🌱</b>习惯</button>
+<button data-go="calendar"><b>📅</b>日历</button>
+<button data-go="themes"><b>✨</b>主题</button>
+</nav>
+
+<script>
+const KEY='xiaotao_full_deploy_v1';
+const defaults={
+ tasks:[],
+ courses:[
+  {id:1,name:'跨境电商专业课',day:1,start:'09:00',end:'10:30'},
+  {id:2,name:'大学语文',day:3,start:'14:00',end:'15:30'}
+ ],
+ habits:[{id:'medicine',name:'吃药',checks:{}},{id:'study',name:'学习',checks:{}},{id:'sleep',name:'按时休息',checks:{}}],
+ focus:{},theme:'peach',created:new Date().toISOString()
+};
+const THEMES={
+ peach:{name:'水蜜桃',icon:'🍑',bg:'#f9f3f4',panel:'#fffafb',panel2:'#f5e7ea',text:'#4d3940',muted:'#987b84',line:'#ecd7dd',accent:'#d96f91',accent2:'#f0b4c5',texture:'radial-gradient(circle at 15% 20%,rgba(255,255,255,.8) 0 1px,transparent 1px)'},
+ coast:{name:'玻璃海岸',icon:'🫧',bg:'#edf8fb',panel:'#f8fdff',panel2:'#dff2f8',text:'#294c5a',muted:'#6a909f',line:'#c7e5ee',accent:'#3c9fc3',accent2:'#95d3e7',texture:'linear-gradient(135deg,rgba(255,255,255,.25) 25%,transparent 25%)'},
+ magic:{name:'魔法星空',icon:'🔮',bg:'#f2edfb',panel:'#fbf9ff',panel2:'#e8ddf7',text:'#473a5b',muted:'#84729b',line:'#d9cdf0',accent:'#8062bd',accent2:'#bfa9e6',texture:'radial-gradient(circle,rgba(128,98,189,.12) 1px,transparent 1px)'},
+ galaxy:{name:'银河童话',icon:'🌌',bg:'#eef2fb',panel:'#fbfcff',panel2:'#dde6f8',text:'#35445f',muted:'#7384a8',line:'#cfd9ef',accent:'#5b79bf',accent2:'#9db3e8',texture:'radial-gradient(circle at 70% 30%,rgba(255,255,255,.8) 0 1px,transparent 1px)'},
+ orchard:{name:'暖阳果园',icon:'🍊',bg:'#fbf4e8',panel:'#fffdf8',panel2:'#f5e6c9',text:'#5a4834',muted:'#927a5e',line:'#e9d7b8',accent:'#dd8a45',accent2:'#efbe7b',texture:'repeating-linear-gradient(0deg,rgba(120,80,30,.03) 0 1px,transparent 1px 9px)'},
+ lady:{name:'古典仕女',icon:'🪷',bg:'#f7f1ed',panel:'#fffaf7',panel2:'#ecdfd8',text:'#55453f',muted:'#8a756d',line:'#dfcec6',accent:'#a65f68',accent2:'#d4a9ab',texture:'repeating-linear-gradient(90deg,rgba(90,50,40,.025) 0 1px,transparent 1px 8px)'},
+ rain:{name:'雨夜书房',icon:'📚',bg:'#edf1f2',panel:'#f8fbfb',panel2:'#dce7e8',text:'#354b50',muted:'#71868b',line:'#ccdadd',accent:'#4e7c86',accent2:'#92b6bd',texture:'repeating-linear

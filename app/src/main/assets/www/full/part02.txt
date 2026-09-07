@@ -1,0 +1,64 @@
+-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+.theme{border:2px solid transparent;text-align:left}.theme.active{border-color:var(--accent)}.swatches{display:flex;gap:5px;margin-top:9px}.swatches i{width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.06)}
+.progress{height:8px;background:var(--panel2);border-radius:999px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;background:var(--accent)}
+.notice{padding:13px 14px;border-radius:16px;background:var(--panel2);border:1px dashed var(--line);color:var(--muted);line-height:1.65;font-size:12px}
+.kpi-table{width:100%;border-collapse:collapse}.kpi-table td{padding:9px;border-bottom:1px solid var(--line);font-size:13px}.kpi-table td:last-child{text-align:right;font-weight:800}
+.chart{height:170px;display:flex;align-items:end;gap:7px;padding-top:12px}.bar{flex:1;background:var(--accent2);border-radius:8px 8px 3px 3px;min-height:6px;position:relative}.bar span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted)}
+.assistant{display:grid;grid-template-rows:1fr auto;min-height:350px}.chat{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow:auto;padding-right:4px}.bubble{max-width:82%;padding:10px 12px;border-radius:14px;font-size:13px;line-height:1.6}.bubble.bot{background:var(--panel2)}.bubble.me{background:var(--accent);color:#fff;align-self:flex-end}
+.mobile-nav{display:none}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}main{padding:12px 12px 92px}.grid{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}.course-grid,.theme-grid,.history-grid{grid-template-columns:repeat(2,1fr)}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);left:0;right:0;bottom:0;z-index:50;background:var(--panel);border-top:1px solid var(--line);padding:7px 5px calc(7px + env(safe-area-inset-bottom))}.mobile-nav button{border:0;background:transparent;border-radius:12px;padding:5px 2px;color:var(--muted);font-size:10px}.mobile-nav button.active{color:var(--accent);background:var(--panel2)}.mobile-nav b{display:block;font-size:18px}.topbar{margin-bottom:10px}.topbar h2{font-size:17px}.hero{min-height:170px;padding:20px}.hero h1{font-size:25px}.heatmap{grid-template-columns:repeat(14,1fr)}}
+@media(max-width:560px){.course-grid,.theme-grid,.history-grid{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.week-head,.habit-row{grid-template-columns:minmax(80px,1fr) repeat(7,32px);gap:4px}.cal-day{min-height:62px}.top-actions .hide-mobile{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-logo">🍑</div><div><b>小桃工作台</b><small>FULL · 独立部署版</small></div></div>
+  <div class="nav" id="sideNav">
+    <button class="active" data-go="home">🏠 首页总览</button>
+    <button data-go="plan">🎯 目标计划</button>
+    <button data-go="courses">📚 课程与课表</button>
+    <button data-go="habits">🌱 习惯与专注</button>
+    <button data-go="calendar">📅 日历安排</button>
+    <button data-go="weekly">📊 周报复盘</button>
+    <button data-go="history">🕰️ 历史回顾</button>
+    <button data-go="themes">✨ 主题工作室</button>
+    <button data-go="assistant">🍑 小桃助手</button>
+  </div>
+  <div class="side-foot"><div class="side-note">数据默认保存在本机浏览器。支持 JSON 导出 / 导入。静态托管也能运行。</div></div>
+</aside>
+<main>
+<div class="topbar"><h2 id="pageTitle">首页总览</h2><div class="top-actions"><button class="ghost hide-mobile" onclick="exportData()">导出备份</button><button class="ghost" onclick="showPage('themes')">换主题</button></div></div>
+
+<section class="page active" data-page="home">
+<div class="hero"><span class="pill" id="todayText"></span><h1 id="helloText">今天也一点点往前走。</h1><p>课程、DDL、复习、习惯、专注、周报和主题，都放在同一个工作台里。先完成最小的一步，再继续下一步。</p></div>
+<div class="grid">
+<div class="card stat"><strong id="statToday">0</strong><span>今日待办</span></div>
+<div class="card stat"><strong id="statDDL">0</strong><span>三日内 DDL</span></div>
+<div class="card stat"><strong id="statHabit">0%</strong><span>本周习惯</span></div>
+<div class="card stat"><strong id="statFocus">0</strong><span>本周专注分钟</span></div>
+</div>
+<div class="grid-2">
+<div><div class="section-title"><h2>今天要做</h2><span id="riskText"></span></div><div class="card"><div class="inputrow"><input class="field" id="quickTask" placeholder="快速添加一个今天要做的任务"><button class="btn" onclick="addQuickTask()">添加</button></div><div class="list" id="todayList" style="margin-top:10px"></div></div></div>
+<div><div class="section-title"><h2>课程提醒</h2><span>今天</span></div><div class="card" id="todayCourses"></div></div>
+</div>
+<div class="section-title"><h2>最近投入</h2><span>56 天热力图</span></div><div class="card"><div class="heatmap" id="heatmap"></div></div>
+</section>
+
+<section class="page" data-page="plan">
+<div class="section-title"><h2>目标与 DDL</h2><span>自动判断风险</span></div>
+<div class="card"><div class="formgrid">
+<div class="full"><span class="label">任务名称</span><input class="field" id="taskName" placeholder="例如：大学语文 AI 动画镜头完成"></div>
+<div><span class="label">截止日期</span><input class="field" id="taskDate" type="date"></div>
+<div><span class="label">预计分钟</span><input class="field" id="taskMinutes" type="number" value="60"></div>
+<div><span class="label">分类</span><select class="field" id="taskCat"><option>学习</option><option>作业</option><option>考试</option><option>项目</option><option>生活</option></select></div>
+<div><span class="label">优先级</span><select class="field" id="taskPriority"><option>普通</option><option>重要</option><option>紧急</option></select></div>
+<div class="full"><button class="btn" onclick="addTask()">加入计划</button></div>
+</div></div>
+<div class="section-title"><h2>全部计划</h2><span id="planCount"></span></div><div class="list" id="planList"></div>
+</section>
+
+<section class="page" data-page="courses">
+<div class="section-title"><h2>课程与课表</h2><span>下课后自动进入复习候选</span></div>
+<div class="card"><div class="formgrid">
+<div><span class="label">课程</span><input class="field" 

@@ -1,25 +1,34 @@
-# 小桃工作台 Android 封装
+# 小桃工作台 Android · Local 1.2
 
-这是小桃工作台最新版的 Android WebView 封装工程，应用固定打开公开站点：
-`https://xiaotao-workbench.cying4552.chatgpt.site/workbench`
+这是“小桃工作台”的本地核心版 Android 应用。
 
-## 隐私说明
+## 为什么改成本地版
 
-- APK 不内置任何 API Key。
-- 网页中的 API Key 只保留在当前页面内存，刷新或关闭后清除。
-- 应用禁止明文 HTTP、文件访问、内容访问与系统备份。
-- 学习数据仍保存在应用 WebView 的本地存储中。
+原来的 1.1 版直接在 Android WebView 中打开 `chatgpt.site`，部分手机会被 Cloudflare 安全策略拦截。1.2 版把核心页面直接内置进 APK，因此启动、计划、习惯、日历、复盘、主题与数据管理不依赖该站点。
 
-## 一键生成 APK
+## 数据
 
-将本文件夹内容上传到 GitHub 仓库，打开 **Actions → Build Android APK → Run workflow**。构建完成后，在该次任务底部下载 `xiaotao-workbench-apk`，解压即可获得 `app-debug.apk`。
+- 任务、习惯、专注、主题等数据保存在应用 WebView 的本地存储。
+- 正常退出、重启手机、覆盖安装同包名新版通常会保留。
+- 卸载 App 或系统设置中“清除数据”会删除本地记录。
+- 1.2 新增 JSON 导出备份 / 导入恢复。
+- App 不内置 API Key。
 
-也可以在安装了 Android SDK 35 和 Gradle 8.7 的电脑中运行：
+## 本地功能
 
-```bash
-gradle assembleDebug
-```
+- 首页总览与今日待办
+- DDL 风险判断
+- 周习惯追踪（默认包含“吃药”）
+- 专注分钟与 28 天热力图
+- 月历和每周自动汇总
+- 10 套本地主题
+- JSON 数据备份/恢复
+- 可用系统浏览器单独打开线上版（不嵌在 WebView 中）
 
-生成位置：`app/build/outputs/apk/debug/app-debug.apk`。
+## 构建
 
-当前应用版本：`1.1.0 (2)`。因为应用读取公开网站，之后网站主题和功能更新无需重新打包 APK。
+GitHub Actions：`Actions → Build Android APK → Run workflow`
+
+产物：`xiaotao-workbench-apk` → `app-debug.apk`
+
+当前版本：`1.2.0 (3)`。
